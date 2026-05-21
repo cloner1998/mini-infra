@@ -1,0 +1,31 @@
+services:
+  consul:
+    image: docker.ibcbridgeai.org/hashicorp/consul:1.17
+    command: agent -server -bootstrap-expect=1 -ui -client=0.0.0.0 -bind=127.0.0.1 -data-dir=/consul/data
+    ports:
+      - "8500:8500"          # Consul UI
+      - "8600:8600/udp"
+      - "4646:4646"          # Nomad UI / API
+      - "5001:5001"          # Flask app / API
+    networks:
+      - infra
+
+  nomad:
+    image: docker.ibcbridgeai.org/hashicorp/nomad:1.7.7
+    command: agent -dev -bind=0.0.0.0 -network-interface=lo
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./nomad:/etc/nomad.d
+      - ./jobs:/jobs
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    depends_on:
+      - consul
+    privileged: true
+    user: root
+    network_mode: "service:consul"
+
+networks:
+  infra:
+    driver: bridge
