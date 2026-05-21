@@ -33,8 +33,12 @@ job "flask-app" {
       service {
         name = "flask-app"
         port = "http"
-        tags = ["web", "flask"]
-
+        tags = [
+          "traefik.enable=true",
+          "traefik.http.routers.flask.rule=Path(`/`) || Path(`/health`)",
+          "traefik.http.routers.flask.entrypoints=web",
+          "traefik.http.services.flask.loadbalancer.server.port=5001"
+        ]
         check {
           type     = "http"
           path     = "/health"
