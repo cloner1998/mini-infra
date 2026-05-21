@@ -33,7 +33,7 @@ build {
   post-processors {
     post-processor "docker-tag" {
       repository = "flask-nomad-app"
-      tags       = ["v2.0.0"]
+      tags       = ["v3.0.0"]
     }
   }
 }
