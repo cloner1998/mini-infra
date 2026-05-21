@@ -1,6 +1,6 @@
 job "flask-app" {
   datacenters = ["dc1"]
-  type        = "service"
+  type = "service"
 
   group "web" {
     count = 1
@@ -16,7 +16,7 @@ job "flask-app" {
       driver = "docker"
 
       config {
-        image      = "flask-nomad-app:v2.0.0"
+        image      = "flask-nomad-app:v3.0.0"
         force_pull = false
         ports = ["http"]
 
@@ -37,15 +37,15 @@ job "flask-app" {
         port = "http"
         tags = [
           "traefik.enable=true",
-          "traefik.http.routers.flask.rule=Path(`/`) || Path(`/health`) || Path(`/db`)",
+          "traefik.http.routers.flask.rule=Path(`/`) || Path(`/health`) || Path(`/db`) || Path(`/consume`) || Path(`/publish`) ",
           "traefik.http.routers.flask.entrypoints=web",
           "traefik.http.services.flask.loadbalancer.server.port=5001"
         ]
         check {
-          type     = "http"
-          path     = "/health"
-          interval = "10s"
-          timeout  = "2s"
+          type         = "http"
+          path         = "/health"
+          interval     = "10s"
+          timeout      = "2s"
           address_mode = "driver"
         }
       }
