@@ -6,7 +6,9 @@ services:
       - "8500:8500"          # Consul UI
       - "8600:8600/udp"
       - "4646:4646"          # Nomad UI / API
-      - "5001:5001"          # Flask app / API
+      - "80:80"       # incoming traffic
+      - "8080:8080"   # Traefik dashboard
+      # - "5001:5001"          # Flask app / API
     networks:
       - infra
 
@@ -31,16 +33,12 @@ services:
     command:
       - "--api.insecure=true"           # enable Traefik dashboard
       - "--providers.consulcatalog=true"  # watch Consul for services
-      - "--providers.consulcatalog.endpoint.address=http://consul:8500"
+      - "--providers.consulcatalog.endpoint.address=http://127.0.0.1:8500"
       - "--providers.consulcatalog.exposedByDefault=false"  # only expose tagged services
       - "--entrypoints.web.address=:80"  # listen on port 80
-    ports:
-      - "80:80"       # incoming traffic
-      - "8080:8080"   # Traefik dashboard
     depends_on:
       - consul
-    networks:
-      - infra
+    network_mode: "service:consul"
 
 networks:
   infra:
