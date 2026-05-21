@@ -8,6 +8,7 @@ services:
       - "4646:4646"          # Nomad UI / API
       - "80:80"       # incoming traffic
       - "8080:8080"   # Traefik dashboard
+      - "15672:15672" # RabbitMQ UI
       # - "5001:5001"          # Flask app / API
     networks:
       - infra
