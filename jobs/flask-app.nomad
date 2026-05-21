@@ -8,7 +8,7 @@ job "flask-app" {
     network {
       # 1. Define the port label here and set static to 5001
       port "http" {
-        static = 5001
+        to = 5001
       }
     }
 
@@ -23,6 +23,8 @@ job "flask-app" {
         # 2. Force the Flask container to use the exact same network stack
         # as the active container running our Consul agent.
         network_mode = "container:mini-infra-consul-1"
+
+        auth_soft_fail = true
       }
 
       resources {
@@ -44,6 +46,7 @@ job "flask-app" {
           path     = "/health"
           interval = "10s"
           timeout  = "2s"
+          address_mode = "driver"
         }
       }
     }
